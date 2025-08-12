@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="lb">
+<head>
+    <meta charset="UTF-8">
+    <title>Setz d'événementer an d'richteg uerdnung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fdf6e3;
+            text-align: center;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 1.5em;
+        }
+
+        #events {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event {
+            display: inline-block;
+            background-color: #fff;
+            padding: 10px 15px;
+            margin: 10px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-transform: lowercase;
+        }
+
+        .event.selected {
+            background-color: #cce5ff;
+        }
+
+        .event.solved .highlight-letter {
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Setz dës Événementer an d'richteg Uerdnung</h1>
+<p>(Klick se ee nom aneren an der richteger Uerdnung) <button onclick="init()">Reset</button></p>
+
+<div id="events"></div>
+<p id="result"></p>
+
+<script>
+    // richteg uerdnung
+    const correctOrder = [
+        'chrësch<span class="highlight-letter">t</span>dagfeier 🎄',
+        '<span class="highlight-letter">e</span>ischte kuss 💋',
+        'éischte weekend zu <span class="highlight-letter">l</span>éck 🧇',
+        'j<span class="highlight-letter">e</span> t\'aime ❤️',
+        'finali<span class="highlight-letter">s</span>éierung vum canapé aus paletten 🔨',
+        'trott<span class="highlight-letter">i</span>-lux zu befort 🛴',
+        'stad<span class="highlight-letter">e</span> du luxembourg ⚽',
+        'flu<span class="highlight-letter">g</span> iwwer besançon ✈️',
+        'roadtrip an d<span class="highlight-letter">e</span>n usa 🚗'
+    ];
+
+    let selectedOrder;
+    const container = document.getElementById("events");
+    const events = [...correctOrder].sort(() => Math.random() - 0.5);
+
+    init();
+
+    function init() {
+        selectedOrder = [];
+        container.innerHTML = '';
+
+        events.forEach(event => {
+            const btn = document.createElement("div");
+            btn.innerHTML = event;
+            btn.classList.add("event");
+            btn.onclick = () => selectEvent(btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function selectEvent(element) {
+        if (element.classList.contains("selected")) return;
+        element.classList.add("selected");
+        selectedOrder.push(element.innerHTML);
+
+        if (selectedOrder.length === correctOrder.length) {
+            checkOrder();
+        }
+    }
+
+    function checkOrder() {
+        const result = document.getElementById("result");
+        if (selectedOrder.every((ev, idx) => {
+            return ev === correctOrder[idx]
+        })) {
+            result.textContent = "Tipptopp! Elo hues de d'Uerdnung fonnt 🎉";
+            result.style.color = "green";
+
+            // no erfolleg: d'eventer an richteger uerdnung weisen
+            container.innerHTML = "";
+            correctOrder.forEach(event => {
+                const btn = document.createElement("div");
+                btn.innerHTML = event;
+                btn.classList.add("event", "selected");
+                btn.classList.add("event", "solved");
+                container.appendChild(btn);
+            });
+
+        } else {
+            result.textContent = "hmm... dat ass net d'richteg Uerdnung 🤔 Probéier nach eng kéier!";
+            result.style.color = "red";
+
+            // reset
+            document.querySelectorAll(".event").forEach(e => e.classList.remove("selected"));
+            selectedOrder = [];
+        }
+    }
+</script>
+
+</body>
+</html>
